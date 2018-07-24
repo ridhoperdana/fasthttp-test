@@ -17,7 +17,7 @@ const (
 	DELETE = "DELETE"
 )
 
-func StartServerOnPort(t *testing.T, method, path string, port int, handler func(ctx *fasthttp.RequestCtx, router *fasthttprouter.Router), requestBody interface{}) (gorequest.Response, string, []error) {
+func StartServerOnPort(t *testing.T, port int, router *fasthttprouter.Router, requestBody interface{}) (gorequest.Response, string, []error) {
 	ln, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
 	defer ln.Close()
 
@@ -25,7 +25,6 @@ func StartServerOnPort(t *testing.T, method, path string, port int, handler func
 		t.Fatalf("cannot start tcp server on port %d: %s", port, err)
 	}
 
-	router.Handle(method, path, handler)
 	go fasthttp.Serve(ln, router.Handler)
 
 	agent := gorequest.New()
